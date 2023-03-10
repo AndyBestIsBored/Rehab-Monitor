@@ -5,6 +5,7 @@ import numpy as np
 import cv2
 import datetime as dt
 import csv
+import pandas as pd
 
 def convert(array):
   result = [array[0], array[1], array[2]]
@@ -111,6 +112,9 @@ def Detect():
             mp_drawing.plot_landmarks(
                 results.pose_world_landmarks, mp_pose.POSE_CONNECTIONS)
 
+        features = ["Origin_X", "Origin_Y", "Origin_Z", "Left_Shoulder_X", "Left_Shoulder_Y", "Left_Shoulder_Z", "Right_Shoulder_X", "Right_Shoulder_Y", "Right_Shoulder_Z", "Left_Hip_X", "Left_Hip_Y", "Left_Hip_Z", "Right_Hip_X", "Right_Hip_Y", "Right_Hip_Z", "Left_Knee_X", "Left_Knee_Y", "Left_Knee_Z", "Right_Knee_X", "Right_Knee_Y", "Right_Knee_Z", "Left_Ankle_X", "Left_Ankle_Y", "Left_Ankle_Z", "Right_Ankle_X", "Right_Ankle_Y", "Right_Ankle_Z", "Left Knee Angle", "Right Knee Angle", "Left Yaw Angle", "Right Yaw Angle", "Left Pitch Angle", "Right Pitch Angle", "Left Roll Angle", "Right Roll Angle"]
+        liveData = pd.DataFrame(columns = features)
+        # liveData.set_index("Time")
 
     # For webcam input:
     
@@ -458,7 +462,18 @@ def Detect():
                     print("Right Pitch Angle", R_pitch)
                     print("Right Roll Angle", R_roll)  
 
-
+                    #
+                    OR = convert(origin_Raw)
+                    LS = convert(L_Shoulder)
+                    RS = convert(R_Shoulder)
+                    LH = convert(L_Hip)
+                    RH = convert(R_Hip)
+                    LK = convert(L_Knee)
+                    RK = convert(R_Knee)
+                    LA = convert(L_Ankle)
+                    RA = convert(R_Ankle)
+                    liveData.loc[liveData.shape[0]] = [OR[0], OR[1], OR[2], LS[0], LS[1], LS[2], RS[0], RS[1], RS[2], LH[0], LH[1], LH[2], RH[0], RH[1], RH[2], LK[0], LK[1], LK[2], RK[0], RK[1], RK[2], LA[0], LA[1], LA[2], RA[0], RA[1], RA[2], L_Knee_Angle, R_Knee_Angle, L_yaw, R_yaw, L_pitch, R_pitch, L_roll, R_roll]
+                    liveData.tail(150).to_csv('liveplot.csv')
 
                 #image = cv2.flip(image,1)
                 image = cv2.putText(image, f"Body Detected", org, font, fontScale, color, thickness, cv2.LINE_AA)
